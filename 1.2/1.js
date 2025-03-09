@@ -39,27 +39,25 @@ if (argv._[0] === 'current') {
 
     if (argv.year === true) {
         date.setFullYear(date.getFullYear() + by);
-        console.log(date.getFullYear());
+        console.log(date);
     } else if (argv.month === true) {
         date.setMonth(date.getMonth() + by);
-        console.log(date.getMonth() + 1);
+        console.log(date);
     } else if (argv.date === true) {
         date.setDate(date.getDate() + by);
-        console.log(date.getDate());
+        console.log(date);
     }
 } else if (argv._[0] === 'sub') {
     const by = argv._[1];
 
     if (argv.year === true) {
         date.setFullYear(date.getFullYear() - by);
-        console.log(date.getFullYear());
+        console.log(date);
     } else if (argv.month === true) {
         date.setMonth(date.getMonth() - by);
-        console.log(date.getMonth() + 1);
+        console.log(date);
     } else if (argv.date === true) {
         date.setDate(date.getDate() - by);
-        console.log(date.getDate());
+        console.log(date);
     }
 }
-
-console.log(argv);
