@@ -1,0 +1,9 @@
+{
+  "name": "netology",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "bin": {
+    "simple-date": "./simple-date.js"
+  }
+}
