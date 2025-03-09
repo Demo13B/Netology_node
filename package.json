@@ -5,5 +5,8 @@
   "license": "MIT",
   "bin": {
     "simple-date": "./simple-date.js"
+  },
+  "dependencies": {
+    "yargs": "^17.7.2"
   }
 }
