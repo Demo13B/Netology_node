@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const readline = require('node:readline');
 
 const rl = readline.createInterface({

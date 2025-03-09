@@ -4,7 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "bin": {
-    "simple-date": "./simple-date.js"
+    "simple-date": "./simple-date.js",
+    "date": "./1.2/1.js",
+    "guesser": "./1.2/2.js"
   },
   "dependencies": {
     "yargs": "^17.7.2"
