@@ -6,7 +6,9 @@
   "bin": {
     "simple-date": "./simple-date.js",
     "date": "./1.2/1.js",
-    "guesser": "./1.2/2.js"
+    "guesser": "./1.2/2.js",
+    "coinflip": "./1.4/1.js",
+    "analyser": "./1.4/2.js"
   },
   "dependencies": {
     "yargs": "^17.7.2"
