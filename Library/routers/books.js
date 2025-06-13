@@ -1,14 +1,18 @@
 const express = require('express');
 const { v4: uuid } = require('uuid');
+const fs = require('fs');
+
+const fileFetcher = require('../middleware/file');
 
 class Book {
     constructor(
         title = "",
         description = "",
         authors = "",
-        favorite = "",
+        favorite = false,
         fileCover = "",
         fileName = "",
+        fileBook = "",
         id = uuid()
     ) {
         this.id = id;
@@ -18,6 +22,7 @@ class Book {
         this.favorite = favorite;
         this.fileCover = fileCover;
         this.fileName = fileName;
+        this.fileBook = fileBook;
     };
 }
 
@@ -47,7 +52,12 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', fileFetcher.single('book-file'), (req, res) => {
+    if (req.file == undefined) {
+        res.sendStatus(400);
+        return;
+    }
+
     const { books } = storage;
     const {
         title,
@@ -57,6 +67,7 @@ router.post('/', (req, res) => {
         fileCover,
         fileName
     } = req.body;
+    const fileBook = req.file.path;
 
     const book = new Book(
         title,
@@ -64,7 +75,8 @@ router.post('/', (req, res) => {
         authors,
         favorite,
         fileCover,
-        fileName
+        fileName,
+        fileBook
     );
 
     books.push(book);
@@ -72,7 +84,12 @@ router.post('/', (req, res) => {
 });
 
 
-router.put('/:id', (req, res) => {
+router.put('/:id', fileFetcher.single('book-file'), (req, res) => {
+    if (req.file == undefined) {
+        res.sendStatus(400);
+        return;
+    }
+
     const { id } = req.params;
     const { books } = storage;
     const {
@@ -83,10 +100,15 @@ router.put('/:id', (req, res) => {
         fileCover,
         fileName
     } = req.body;
+    const fileBook = req.file.path;
 
     const idx = books.findIndex(el => el.id === id)
 
     if (idx !== -1) {
+        fs.unlink(books[idx].fileBook, (err) => {
+            if (err) console.error(err);
+        });
+
         books[idx] = {
             ...books[idx],
             title,
@@ -94,12 +116,17 @@ router.put('/:id', (req, res) => {
             authors,
             favorite,
             fileCover,
-            fileName
+            fileName,
+            fileBook
         };
 
 
         res.json(books[idx]);
     } else {
+        fs.unlink(fileBook, (err) => {
+            if (err) console.error(err);
+        });
+
         res.status(404).send('The book is not found');
     }
 });
@@ -112,6 +139,10 @@ router.delete('/:id', (req, res) => {
     const idx = books.findIndex(el => el.id === id);
 
     if (idx !== -1) {
+        fs.unlink(books[idx].fileBook, (err) => {
+            if (err) console.error(err);
+        });
+
         books.splice(idx, 1);
     }
 
