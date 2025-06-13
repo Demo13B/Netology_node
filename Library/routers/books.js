@@ -36,6 +36,20 @@ router.get('/', (req, res) => {
     res.json(storage.books);
 });
 
+router.get('/:id/download', (req, res) => {
+    const { id } = req.params;
+    const { books } = storage;
+
+    const idx = books.findIndex(el => el.id === id);
+
+    if (idx !== -1) {
+        res.download(books[idx].fileBook, 'book.pdf', (err) => {
+            if (err) console.error(err);
+        });
+    } else {
+        res.status(404).send('The book is not found');
+    }
+});
 
 router.get('/:id', (req, res) => {
     const { id } = req.params;
