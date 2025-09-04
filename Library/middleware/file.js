@@ -3,7 +3,7 @@ const { v4: uuid } = require('uuid');
 
 const storage = multer.diskStorage({
     destination(req, file, cb) {
-        cb(null, 'Library/filestore/books');
+        cb(null, 'filestore/books');
     },
     filename(req, file, cb) {
         cb(null, `${uuid()}.pdf`);

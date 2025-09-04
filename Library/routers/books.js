@@ -99,11 +99,6 @@ router.post('/', fileFetcher.single('book-file'), (req, res) => {
 
 
 router.put('/:id', fileFetcher.single('book-file'), (req, res) => {
-    if (req.file == undefined) {
-        res.sendStatus(400);
-        return;
-    }
-
     const { id } = req.params;
     const { books } = storage;
     const {
@@ -114,14 +109,21 @@ router.put('/:id', fileFetcher.single('book-file'), (req, res) => {
         fileCover,
         fileName
     } = req.body;
-    const fileBook = req.file.path;
 
     const idx = books.findIndex(el => el.id === id)
 
     if (idx !== -1) {
-        fs.unlink(books[idx].fileBook, (err) => {
-            if (err) console.error(err);
-        });
+        let fileBook = '';
+
+        if (req.file) {
+            fs.unlink(books[idx].fileBook, (err) => {
+                if (err) console.error(err);
+            });
+
+            fileBook = req.file.path;
+        } else {
+            fileBook = books[idx].fileBook;
+        }
 
         books[idx] = {
             ...books[idx],
@@ -137,9 +139,11 @@ router.put('/:id', fileFetcher.single('book-file'), (req, res) => {
 
         res.json(books[idx]);
     } else {
-        fs.unlink(fileBook, (err) => {
-            if (err) console.error(err);
-        });
+        if (req.file) {
+            fs.unlink(fileBook, (err) => {
+                if (err) console.error(err);
+            });
+        }
 
         res.status(404).send('The book is not found');
     }
@@ -164,4 +168,4 @@ router.delete('/:id', (req, res) => {
 });
 
 
-module.exports = router;
+module.exports = { router, storage };
