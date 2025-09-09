@@ -11,13 +11,21 @@
     "analyser": "./1.4/2.js"
   },
   "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "multer": "^2.0.1",
+    "pm2": "^6.0.8",
+    "uuid": "^11.1.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "dotenv": "^16.4.7",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.10"
   },
   "scripts": {
-    "dev": "node -r dotenv/config http-module.js"
+    "dev": "nodemon -r dotenv/config Library/index.js",
+    "start": "pm2 start --node-args='-r dotenv/config' Library/index.js",
+    "status": "pm2 status",
+    "stop": "pm2 kill"
   }
 }

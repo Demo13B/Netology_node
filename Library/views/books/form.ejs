@@ -1,0 +1,59 @@
+<form id="bookForm" class="mt-5">
+    <div class="form-group">
+        <label for="inputTitle">Заголовок</label>
+        <input type="text" value="<%= book.title %>" name="title" class="form-control" id="inputTitle">
+    </div>
+
+    <div class="form-group">
+        <label for="inputDesc">Описание</label>
+        <textarea rows="3" name="description" class="form-control" id="inputDesc"><%= book.description %></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="inputAuthors">Авторы</label>
+        <input type="text" value="<%= book.authors %>" name="authors" class="form-control" id="inputAuthors">
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" class="form-check-input" id="inputFavorite" name="favorite" <%=book && book.favorite
+            ? 'checked' : '' %>>
+        <label class="form-check-label" for="inputFavorite">Избранная</label>
+    </div>
+
+    <div class="form-group">
+        <label for="inputFileBook">Файл книги</label>
+        <input type="file" name="book-file" class="form-control-file" id="inputFileBook">
+        <% if (book && book.fileBook) { %>
+            <small class="form-text text-muted">Текущий файл: <%= book.fileName %></small>
+            <% } %>
+    </div>
+
+    <div class="form-group text-right ">
+        <button type="submit" class="btn btn-primary">
+            <%=button %>
+        </button>
+    </div>
+
+</form>
+
+<script>
+    const form = document.getElementById('bookForm');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        const response = await fetch(`/api/books/<%=book.id %>`, {
+            method: '<%=method%>',
+            body: formData
+        });
+
+        if (response.ok) {
+            window.location.href = '/books';
+        } else {
+            window.location.href = '/404';
+        }
+    });
+
+</script>
