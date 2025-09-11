@@ -5,8 +5,13 @@ WORKDIR /app
 COPY package.json yarn.lock /app/
 RUN yarn install --production
 
-COPY view /app/
+COPY views /app/views/
 COPY Library /app/
+
+RUN mkdir log
+RUN touch log/access.log
+RUN mkdir filestore
+RUN mkdir filestore/books
 
 
 CMD [ "yarn", "start_docker" ]

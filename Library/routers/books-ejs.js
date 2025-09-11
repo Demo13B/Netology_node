@@ -39,7 +39,7 @@ router.get('/:id/download', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const idx = storage.books.findIndex(el => el.id === id);
 
@@ -48,7 +48,17 @@ router.get('/:id', (req, res) => {
         return;
     }
 
-    res.render('books/view', { title: 'Просмотр книги', book: storage.books[idx] });
+    await fetch(`http://counter:3001/counter/${storage.books[idx].id}/incr`, {
+        method: 'POST'
+    });
+
+    const response = await fetch(`http://counter:3001/counter/${storage.books[idx].id}`, {
+        method: 'GET'
+    });
+
+    const body = await response.json();
+
+    res.render('books/view', { title: 'Просмотр книги', book: storage.books[idx], count: body.count });
 });
 
 router.get('/', (req, res) => {

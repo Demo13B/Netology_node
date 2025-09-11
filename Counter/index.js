@@ -11,23 +11,18 @@ app.get('/counter/:bookId', async (req, res) => {
     const id = req.params.bookId;
 
     await client.connect()
-    const result = await client.get(id);
+    const result = Number(await client.get(id));
     client.quit();
 
-    if (result === null) {
-        res.json({ count: 0 });
-        return;
-    }
-
-    res.json({ count_test: result });
+    res.json({ count: result });
 });
 
 app.post('/counter/:bookId/incr', async (req, res) => {
     const id = req.params.bookId;
 
     await client.connect();
-    const current = await client.get(id);
-    await client.set(id, current + 1);
+    const current = Number(await client.get(id));
+    await client.set(id, Number(current) + 1);
     client.quit();
 
     res.status(201).json({ count: current + 1 });
