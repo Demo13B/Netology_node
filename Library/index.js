@@ -23,5 +23,6 @@ app.use('/api/books', booksRouter.router);
 
 app.use('/', err404);
 
-port = process.env.LIBRARY_PORT || 3000;
+const port = process.env.LIBRARY_PORT || 3000;
 app.listen(port);
+console.log(`App listening on port: ${port}`);

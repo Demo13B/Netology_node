@@ -1,0 +1,40 @@
+services:
+  redis:
+    image: redis:8.2.1-alpine
+    volumes:
+      - redis_data:/data
+    restart: "always"
+    networks:
+      - back
+
+  backend:
+    image: demo13b/library-back:1.0.0
+    environment:
+      - LIBRARY_PORT=3000
+    ports:
+      - 80:3000
+    restart: "unless-stopped"
+    volumes:
+      - book_filestore:/filestore
+    depends_on:
+      - redis
+      - counter
+    networks:
+      - back
+
+  counter:
+    image: demo13b/library-counter:1.0.0
+    environment:
+      - COUNTER_PORT=3001
+    restart: "unless-stopped"
+    depends_on:
+      - redis
+    networks:
+      - back
+
+volumes:
+  book_filestore:
+  redis_data:
+
+networks:
+  back:
