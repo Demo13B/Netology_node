@@ -15,6 +15,7 @@
     "express": "^5.1.0",
     "multer": "^2.0.1",
     "pm2": "^6.0.8",
+    "redis": "^5.8.2",
     "uuid": "^11.1.0",
     "yargs": "^17.7.2"
   },
@@ -25,6 +26,8 @@
   "scripts": {
     "dev": "nodemon -r dotenv/config Library/index.js",
     "start": "pm2 start --node-args='-r dotenv/config' Library/index.js",
+    "start_docker": "node index.js",
+    "dev_docker": "nodemon Library/index.js",
     "status": "pm2 status",
     "stop": "pm2 kill"
   }

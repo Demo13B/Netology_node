@@ -1,0 +1,101 @@
+1)
+tim@vm3359665 ~> docker pull busybox
+Using default tag: latest
+latest: Pulling from library/busybox
+80bfbb8a41a2: Pull complete 
+Digest: sha256:ab33eacc8251e3807b85bb6dba570e4698c3998eca6f0fc2ccb60575a563ea74
+Status: Downloaded newer image for busybox:latest
+docker.io/library/busybox:latest
+
+2)
+tim@vm3359665 ~> docker run --name=pinger busybox ping -c 7 netology.ru
+PING netology.ru (51.250.51.8): 56 data bytes
+64 bytes from 51.250.51.8: seq=0 ttl=58 time=7.962 ms
+64 bytes from 51.250.51.8: seq=1 ttl=58 time=7.943 ms
+64 bytes from 51.250.51.8: seq=2 ttl=58 time=7.904 ms
+64 bytes from 51.250.51.8: seq=3 ttl=58 time=7.959 ms
+64 bytes from 51.250.51.8: seq=4 ttl=58 time=7.907 ms
+64 bytes from 51.250.51.8: seq=5 ttl=58 time=7.974 ms
+64 bytes from 51.250.51.8: seq=6 ttl=58 time=7.942 ms
+
+--- netology.ru ping statistics ---
+7 packets transmitted, 7 packets received, 0% packet loss
+round-trip min/avg/max = 7.904/7.941/7.974 ms
+
+3)
+tim@vm3359665 ~> docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS                      PORTS     NAMES
+02f42a475db2   busybox   "ping -c 7 netology.…"   55 seconds ago   Exited (0) 49 seconds ago             pinger
+
+4)
+tim@vm3359665 ~> docker logs pinger
+PING netology.ru (51.250.51.8): 56 data bytes
+64 bytes from 51.250.51.8: seq=0 ttl=58 time=7.962 ms
+64 bytes from 51.250.51.8: seq=1 ttl=58 time=7.943 ms
+64 bytes from 51.250.51.8: seq=2 ttl=58 time=7.904 ms
+64 bytes from 51.250.51.8: seq=3 ttl=58 time=7.959 ms
+64 bytes from 51.250.51.8: seq=4 ttl=58 time=7.907 ms
+64 bytes from 51.250.51.8: seq=5 ttl=58 time=7.974 ms
+64 bytes from 51.250.51.8: seq=6 ttl=58 time=7.942 ms
+
+--- netology.ru ping statistics ---
+7 packets transmitted, 7 packets received, 0% packet loss
+round-trip min/avg/max = 7.904/7.941/7.974 ms
+
+5) 
+tim@vm3359665 ~> docker start pinger
+pinger
+
+6)
+tim@vm3359665 ~> docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS     NAMES
+02f42a475db2   busybox   "ping -c 7 netology.…"   2 minutes ago   Up 2 seconds             pinger
+
+7)
+tim@vm3359665 ~> docker logs pinger
+PING netology.ru (51.250.51.8): 56 data bytes
+64 bytes from 51.250.51.8: seq=0 ttl=58 time=7.962 ms
+64 bytes from 51.250.51.8: seq=1 ttl=58 time=7.943 ms
+64 bytes from 51.250.51.8: seq=2 ttl=58 time=7.904 ms
+64 bytes from 51.250.51.8: seq=3 ttl=58 time=7.959 ms
+64 bytes from 51.250.51.8: seq=4 ttl=58 time=7.907 ms
+64 bytes from 51.250.51.8: seq=5 ttl=58 time=7.974 ms
+64 bytes from 51.250.51.8: seq=6 ttl=58 time=7.942 ms
+
+--- netology.ru ping statistics ---
+7 packets transmitted, 7 packets received, 0% packet loss
+round-trip min/avg/max = 7.904/7.941/7.974 ms
+PING netology.ru (51.250.51.8): 56 data bytes
+64 bytes from 51.250.51.8: seq=0 ttl=58 time=7.927 ms
+64 bytes from 51.250.51.8: seq=1 ttl=58 time=8.036 ms
+64 bytes from 51.250.51.8: seq=2 ttl=58 time=7.956 ms
+64 bytes from 51.250.51.8: seq=3 ttl=58 time=7.984 ms
+64 bytes from 51.250.51.8: seq=4 ttl=58 time=8.075 ms
+64 bytes from 51.250.51.8: seq=5 ttl=58 time=8.024 ms
+64 bytes from 51.250.51.8: seq=6 ttl=58 time=7.923 ms
+
+--- netology.ru ping statistics ---
+7 packets transmitted, 7 packets received, 0% packet loss
+round-trip min/avg/max = 7.923/7.989/8.075 ms
+PING netology.ru (51.250.51.8): 56 data bytes
+64 bytes from 51.250.51.8: seq=0 ttl=58 time=7.901 ms
+64 bytes from 51.250.51.8: seq=1 ttl=58 time=8.033 ms
+64 bytes from 51.250.51.8: seq=2 ttl=58 time=7.934 ms
+64 bytes from 51.250.51.8: seq=3 ttl=58 time=7.976 ms
+64 bytes from 51.250.51.8: seq=4 ttl=58 time=8.024 ms
+64 bytes from 51.250.51.8: seq=5 ttl=58 time=8.008 ms
+
+8) 3 запуска, 20 запросов
+
+9)
+tim@vm3359665 ~> docker rm pinger
+pinger
+
+10)
+tim@vm3359665 ~> docker rmi busybox
+Untagged: busybox:latest
+Untagged: busybox@sha256:ab33eacc8251e3807b85bb6dba570e4698c3998eca6f0fc2ccb60575a563ea74
+Deleted: sha256:0ed463b26daee791b094dc3fff25edb3e79f153d37d274e5c2936923c38dac2b
+Deleted: sha256:80e840de630d08a6a1e0ee30e7c8378cf1ed6a424315d7e437f54780aee6bf5a
+
+

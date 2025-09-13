@@ -1,0 +1,47 @@
+services:
+  redis:
+    image: redis:8.2.1-alpine
+    volumes:
+      - redis_data:/data
+    restart: "always"
+    networks:
+      - back
+
+  backend:
+    image: node:24.8
+    working_dir: /app/Library
+    environment:
+      - LIBRARY_PORT=3000
+    ports:
+      - 80:3000
+    restart: "unless-stopped"
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+      - counter
+    networks:
+      - back
+    command: ["yarn", "nodemon", "./Library/index.js"]
+
+  counter:
+    image: node:24.8
+    working_dir: /app
+    environment:
+      - COUNTER_PORT=3001
+    ports:
+      - 8080:3001
+    restart: "unless-stopped"
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+    networks:
+      - back
+    command: ["yarn", "nodemon", "Counter/index.js"]
+
+volumes:
+  redis_data:
+
+networks:
+  back:
