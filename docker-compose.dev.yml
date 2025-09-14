@@ -15,6 +15,8 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
+    networks:
+      - back
 
   mongo-express:
     image: mongo-express:1.0.2-20-alpine3.19
@@ -26,6 +28,10 @@ services:
       - ME_CONFIG_BASICAUTH_ENABLED=true
       - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USERNAME}
       - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD}
+    depends_on:
+      - mongo
+    networks:
+      - back
 
   backend:
     image: node:24.8
@@ -40,6 +46,7 @@ services:
     depends_on:
       - redis
       - counter
+      - mongo
     networks:
       - back
     command: ["yarn", "nodemon", "./Library/index.js"]

@@ -45,7 +45,7 @@ router.get('/:id/download', async (req, res) => {
     }
 
     // fileBook should be the path to the file on the server
-    res.download(`${book.fileBook}`, book.fileBook, (err) => {
+    res.download(`${book.fileBook}`, `${book.title}.pdf`, (err) => {
         if (err) console.error(err);
     });
 });
@@ -79,7 +79,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-    const book_response = await fetch(`http://localhost:3000/api/books`, {
+    const book_response = await fetch(`http://localhost:${library_port}/api/books`, {
         method: 'GET'
     });
 

@@ -1,49 +1,29 @@
 const express = require('express');
-const { v4: uuid } = require('uuid');
+const mongoose = require('mongoose');
 const fs = require('fs');
 
 const fileFetcher = require('../middleware/file');
-
-class Book {
-    constructor(
-        title = "",
-        description = "",
-        authors = "",
-        favorite = false,
-        fileCover = "",
-        fileName = "",
-        fileBook = "",
-        id = uuid()
-    ) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.authors = authors;
-        this.favorite = favorite;
-        this.fileCover = fileCover;
-        this.fileName = fileName;
-        this.fileBook = fileBook;
-    };
-}
-
-const storage = {
-    books: []
-}
+const { mongoIdCheck } = require('../middleware/validator');
+const Book = require('../models/books');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.json(storage.books);
+router.get('/', async (req, res) => {
+    try {
+        const books = await Book.find().select('-__v');
+        res.json(books);
+    } catch (e) {
+        res.status(500).json(e);
+    }
 });
 
-router.get('/:id/download', (req, res) => {
+router.get('/:id/download', mongoIdCheck, async (req, res) => {
     const { id } = req.params;
-    const { books } = storage;
 
-    const idx = books.findIndex(el => el.id === id);
+    const book = await Book.findById(id).select('-__v');
 
-    if (idx !== -1) {
-        res.download(books[idx].fileBook, 'book.pdf', (err) => {
+    if (book !== null) {
+        res.download(book.fileBook, `${book.title}.pdf`, (err) => {
             if (err) console.error(err);
         });
     } else {
@@ -51,28 +31,25 @@ router.get('/:id/download', (req, res) => {
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', mongoIdCheck, async (req, res) => {
     const { id } = req.params;
-    const { books } = storage;
 
-    for (let book of books) {
-        if (book.id === id) {
-            res.json(book);
-            return;
-        }
+    const book = await Book.findById(id).select('-__v');
+
+    if (book !== null) {
+        res.json(book);
+    } else {
+        res.status(404).send('The book is not found');
     }
-
-    res.status(404).send('The book is not found');
 });
 
 
-router.post('/', fileFetcher.single('book-file'), (req, res) => {
+router.post('/', fileFetcher.single('book-file'), async (req, res) => {
     if (req.file == undefined) {
         res.sendStatus(400);
         return;
     }
 
-    const { books } = storage;
     const {
         title,
         description,
@@ -83,7 +60,7 @@ router.post('/', fileFetcher.single('book-file'), (req, res) => {
     } = req.body;
     const fileBook = req.file.path;
 
-    const book = new Book(
+    const newBook = new Book({
         title,
         description,
         authors,
@@ -91,16 +68,19 @@ router.post('/', fileFetcher.single('book-file'), (req, res) => {
         fileCover,
         fileName,
         fileBook
-    );
+    });
 
-    books.push(book);
-    res.status(201).json(books.at(-1));
+    try {
+        await newBook.save()
+        res.status(201).json(newBook);
+    } catch (e) {
+        res.status(500).json(e);
+    }
 });
 
 
-router.put('/:id', fileFetcher.single('book-file'), (req, res) => {
+router.put('/:id', fileFetcher.single('book-file'), mongoIdCheck, async (req, res) => {
     const { id } = req.params;
-    const { books } = storage;
     const {
         title,
         description,
@@ -110,58 +90,61 @@ router.put('/:id', fileFetcher.single('book-file'), (req, res) => {
         fileName
     } = req.body;
 
-    const idx = books.findIndex(el => el.id === id)
+    if (req.file == undefined) {
+        try {
+            const new_data = {
+                title,
+                description,
+                authors,
+                favorite,
+                fileCover,
+                fileName
+            }
+            const book = await Book.findByIdAndUpdate(id, new_data)
+            res.json(book);
+        } catch (e) {
+            res.status(500).json(e);
+        }
+    } else {
+        const fileBook = req.file.path;
 
-    if (idx !== -1) {
-        let fileBook = '';
-
-        if (req.file) {
-            fs.unlink(books[idx].fileBook, (err) => {
+        try {
+            const book = await Book.findById(id).select('fileBook');
+            fs.unlink(book.fileBook, (err) => {
                 if (err) console.error(err);
             });
-
-            fileBook = req.file.path;
-        } else {
-            fileBook = books[idx].fileBook;
+        } catch (e) {
+            res.status(500).json(e);
         }
 
-        books[idx] = {
-            ...books[idx],
+        const new_data = {
             title,
             description,
             authors,
             favorite,
             fileCover,
-            fileName,
             fileBook
-        };
-
-
-        res.json(books[idx]);
-    } else {
-        if (req.file) {
-            fs.unlink(fileBook, (err) => {
-                if (err) console.error(err);
-            });
         }
 
-        res.status(404).send('The book is not found');
+        try {
+            const book = await Book.findByIdAndUpdate(id, new_data);
+            res.json(book);
+        } catch (e) {
+            res.status(500).json(e);
+        }
     }
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', mongoIdCheck, async (req, res) => {
     const { id } = req.params;
-    const { books } = storage;
 
-    const idx = books.findIndex(el => el.id === id);
+    const book = await Book.findByIdAndDelete(id);
 
-    if (idx !== -1) {
-        fs.unlink(books[idx].fileBook, (err) => {
+    if (book !== null) {
+        fs.unlink(book.fileBook, (err) => {
             if (err) console.error(err);
         });
-
-        books.splice(idx, 1);
     }
 
     res.send('ok');

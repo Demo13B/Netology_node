@@ -27,7 +27,7 @@
                         </p>
 
                         <p><strong>Файл книги:</strong>
-                            <a href="/books/<%= book.id %>/download">Скачать</a>
+                            <a href="/books/<%= book._id %>/download">Скачать</a>
                         </p>
 
                         <p><strong>Количество просмотров: </strong>
@@ -35,12 +35,12 @@
                         </p>
 
                         <div class="text-right">
-                            <a class="btn btn-sm btn-primary" href="/books/update/<%= book.id %>">
+                            <a class="btn btn-sm btn-primary" href="/books/update/<%= book._id %>">
                                 <i class="fa fa-pencil" aria-hidden="true"></i>
                             </a>
                         </div>
 
-                        <button onclick="deleteBook('<%=book.id %>')" class="btn btn-sm btn-danger">
+                        <button onclick="deleteBook('<%=book._id %>')" class="btn btn-sm btn-danger">
                             <i class="fa fa-trash"></i>
                         </button>
 

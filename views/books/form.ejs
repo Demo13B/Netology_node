@@ -44,7 +44,9 @@
 
         const formData = new FormData(form);
 
-        const response = await fetch(`/api/books/<%=book.id %>`, {
+        formData.set('favorite', form.querySelector('#inputFavorite').checked);
+
+        const response = await fetch(`/api/books/<%=book._id %>`, {
             method: '<%=method%>',
             body: formData
         });

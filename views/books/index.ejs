@@ -28,13 +28,13 @@
                                 <%= el.title %>
                             </td>
                             <td class="text-right">
-                                <a class="btn btn-sm btn-success" href="/books/<%= el.id %>">
+                                <a class="btn btn-sm btn-success" href="/books/<%= el._id %>">
                                     <i class="fa fa-eye" aria-hidden="true"></i>
                                 </a>
-                                <a class="btn btn-sm btn-primary" href="/books/update/<%= el.id %>">
+                                <a class="btn btn-sm btn-primary" href="/books/update/<%= el._id %>">
                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                 </a>
-                                <button onclick="deleteBook('<%=el.id %>')" class="btn btn-sm btn-danger">
+                                <button onclick="deleteBook('<%=el._id %>')" class="btn btn-sm btn-danger">
                                     <i class="fa fa-trash"></i>
                                 </button>
 
