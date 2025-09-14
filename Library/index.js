@@ -19,7 +19,7 @@ app.use('/', indexRouter);
 app.use('/books', booksEJSRouter)
 
 app.use('/api/user', userRouter);
-app.use('/api/books', booksRouter.router);
+app.use('/api/books', booksRouter);
 
 app.use('/', err404);
 

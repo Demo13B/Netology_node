@@ -168,4 +168,4 @@ router.delete('/:id', (req, res) => {
 });
 
 
-module.exports = { router, storage };
+module.exports = router;
