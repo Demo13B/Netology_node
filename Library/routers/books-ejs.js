@@ -25,7 +25,10 @@ router.get('/update/:id', async (req, res) => {
     const { id } = req.params;
 
     const response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Cookie': req.headers.cookie
+        }
     });
 
     const body = await response.json();
@@ -46,7 +49,10 @@ router.get('/:id/download', async (req, res) => {
     const { id } = req.params;
 
     const response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Cookie': req.headers.cookie
+        }
     });
 
     const book = await response.json();
@@ -70,7 +76,10 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
     const book_response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Cookie': req.headers.cookie
+        }
     });
 
     if (!book_response.ok) {
@@ -100,7 +109,10 @@ router.get('/', async (req, res) => {
     }
 
     const book_response = await fetch(`http://localhost:${library_port}/api/books`, {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Cookie': req.headers.cookie
+        }
     });
 
     const books = await book_response.json();

@@ -9,6 +9,10 @@ const Book = require('../models/books');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.sendStatus(401);
+    }
+
     try {
         const books = await Book.find().select('-__v');
         res.json(books);
@@ -18,6 +22,10 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id/download', mongoIdCheck, async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.sendStatus(401);
+    }
+
     const { id } = req.params;
 
     const book = await Book.findById(id).select('-__v');
@@ -32,6 +40,10 @@ router.get('/:id/download', mongoIdCheck, async (req, res) => {
 });
 
 router.get('/:id', mongoIdCheck, async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.sendStatus(401);
+    }
+
     const { id } = req.params;
 
     const book = await Book.findById(id).select('-__v');
@@ -45,6 +57,10 @@ router.get('/:id', mongoIdCheck, async (req, res) => {
 
 
 router.post('/', fileFetcher.single('book-file'), async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.sendStatus(401);
+    }
+
     if (req.file == undefined) {
         res.sendStatus(400);
         return;
@@ -80,6 +96,10 @@ router.post('/', fileFetcher.single('book-file'), async (req, res) => {
 
 
 router.put('/:id', fileFetcher.single('book-file'), mongoIdCheck, async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.sendStatus(401);
+    }
+
     const { id } = req.params;
     const {
         title,
@@ -137,6 +157,10 @@ router.put('/:id', fileFetcher.single('book-file'), mongoIdCheck, async (req, re
 
 
 router.delete('/:id', mongoIdCheck, async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.sendStatus(401);
+    }
+
     const { id } = req.params;
 
     const book = await Book.findByIdAndDelete(id);
