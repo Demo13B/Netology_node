@@ -6,7 +6,7 @@ const User = require('../models/users');
 const router = express.Router();
 
 router.post('/login',
-    passport.authenticate('local', { successRedirect: '/' }),
+    passport.authenticate('local', { successRedirect: '/', failureRedirect: '/api/user/login' }),
     (req, res) => {
         res.status(201).json(req.user);
     }
@@ -51,6 +51,14 @@ router.get('/signup', async (req, res) => {
     }
 
     res.render('users/signup');
+});
+
+router.get('/me', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect('/api/user/login');
+    }
+
+    res.render('users/me', { title: 'Профиль', user: req.user });
 });
 
 module.exports = router;
