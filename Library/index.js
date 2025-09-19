@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const booksRouter = require('./routers/books');
 const userRouter = require('./routers/users');
@@ -19,10 +20,22 @@ app.use('/', indexRouter);
 app.use('/books', booksEJSRouter)
 
 app.use('/api/user', userRouter);
-app.use('/api/books', booksRouter.router);
+app.use('/api/books', booksRouter);
 
 app.use('/', err404);
 
 const port = process.env.LIBRARY_PORT || 3000;
-app.listen(port);
-console.log(`App listening on port: ${port}`);
+const urlDB = process.env.MONGO_URL || 'mongodb://root:pass@mongo:27017/'
+
+const start = async (port, urlDB) => {
+    try {
+        await mongoose.connect(urlDB);
+        console.log('Connected to mongo');
+        app.listen(port);
+        console.log(`App listening on port: ${port}`);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+start(port, urlDB);

@@ -3,22 +3,51 @@ services:
     image: redis:8.2.1-alpine
     volumes:
       - redis_data:/data
-    restart: "always"
+    restart: always
+    networks:
+      - back
+
+  mongo:
+    image: mongo:8.0.14-rc1-noble
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - back
+
+  mongo-express:
+    image: mongo-express:1.0.2-20-alpine3.19
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
+      - ME_CONFIG_BASICAUTH_ENABLED=true
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD}
+    depends_on:
+      - mongo
     networks:
       - back
 
   backend:
-    image: demo13b/library-back:1.0.1
+    image: demo13b/library-back:1.1.1
     environment:
       - LIBRARY_PORT=3000
+      - COUNTER_PORT=3001
+      - MONGO_URL=${MONGO_URL}
     ports:
       - 80:3000
-    restart: "unless-stopped"
+    restart: unless-stopped
     volumes:
       - book_filestore:/filestore
     depends_on:
       - redis
       - counter
+      - mongo
     networks:
       - back
 
@@ -26,7 +55,7 @@ services:
     image: demo13b/library-counter:1.0.0
     environment:
       - COUNTER_PORT=3001
-    restart: "unless-stopped"
+    restart: unless-stopped
     depends_on:
       - redis
     networks:
@@ -35,6 +64,7 @@ services:
 volumes:
   book_filestore:
   redis_data:
+  mongo_data:
 
 networks:
   back:

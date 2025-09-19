@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { storage } = require('./books');
+const library_port = process.env.LIBRARY_PORT || 3000;
 
 const router = express.Router();
 
@@ -13,56 +13,79 @@ router.get('/create', (req, res) => {
     });
 });
 
-router.get('/update/:id', (req, res) => {
+router.get('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const idx = storage.books.findIndex(el => el.id == id);
+
+    const response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
+        method: 'GET'
+    });
+
+    const body = await response.json();
 
     res.render('books/create', {
         title: 'Обновление данных',
-        book: storage.books[idx],
+        book: body,
         button: 'Сохранить',
         method: 'PUT'
     })
 });
 
-router.get('/:id/download', (req, res) => {
+router.get('/:id/download', async (req, res) => {
     const { id } = req.params;
-    const book = storage.books.find(b => b.id === id);
+
+    const response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
+        method: 'GET'
+    });
+
+    const book = await response.json();
+
 
     if (!book || !book.fileBook) {
         return res.status(404).send('Файл не найден');
     }
 
     // fileBook should be the path to the file on the server
-    res.download(`${book.fileBook}`, book.fileBook, (err) => {
+    res.download(`${book.fileBook}`, `${book.title}.pdf`, (err) => {
         if (err) console.error(err);
     });
 });
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
-    const idx = storage.books.findIndex(el => el.id === id);
 
-    if (idx === -1) {
+    const book_response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
+        method: 'GET'
+    });
+
+    if (!book_response.ok) {
         res.redirect('/404');
         return;
     }
 
-    await fetch(`http://counter:3001/counter/${storage.books[idx].id}/incr`, {
+    const book = await book_response.json();
+
+    const counter_port = process.env.COUNTER_PORT || 3001;
+    await fetch(`http://counter:${counter_port}/counter/${book.id}/incr`, {
         method: 'POST'
     });
 
-    const response = await fetch(`http://counter:3001/counter/${storage.books[idx].id}`, {
+    const response = await fetch(`http://counter:${counter_port}/counter/${book.id}`, {
         method: 'GET'
     });
 
     const body = await response.json();
 
-    res.render('books/view', { title: 'Просмотр книги', book: storage.books[idx], count: body.count });
+    res.render('books/view', { title: 'Просмотр книги', book: book, count: body.count });
 });
 
-router.get('/', (req, res) => {
-    res.render('books/index', { title: 'Книги', books: storage.books })
+router.get('/', async (req, res) => {
+    const book_response = await fetch(`http://localhost:${library_port}/api/books`, {
+        method: 'GET'
+    });
+
+    const books = await book_response.json();
+
+    res.render('books/index', { title: 'Книги', books: books })
 });
 
 module.exports = router;
