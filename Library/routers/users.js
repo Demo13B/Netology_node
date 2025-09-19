@@ -6,7 +6,7 @@ const User = require('../models/users');
 const router = express.Router();
 
 router.post('/login',
-    passport.authenticate('local'),
+    passport.authenticate('local', { successRedirect: '/' }),
     (req, res) => {
         res.status(201).json(req.user);
     }
@@ -36,5 +36,13 @@ router.get('/logout', async (req, res) => {
     req.logOut(() => { });
     res.json('OK');
 });
+
+router.get('/login', async (req, res) => {
+    res.render('users/login');
+});
+
+router.get('/signup', async (req, res) => {
+    res.render('users/signup');
+})
 
 module.exports = router;
