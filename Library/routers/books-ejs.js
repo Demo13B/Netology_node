@@ -5,6 +5,10 @@ const library_port = process.env.LIBRARY_PORT || 3000;
 const router = express.Router();
 
 router.get('/create', (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect('/api/user/login');
+    }
+
     res.render('books/create', {
         title: 'Добавление книги',
         book: {},
@@ -14,6 +18,10 @@ router.get('/create', (req, res) => {
 });
 
 router.get('/update/:id', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect('/api/user/login');
+    }
+
     const { id } = req.params;
 
     const response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
@@ -31,6 +39,10 @@ router.get('/update/:id', async (req, res) => {
 });
 
 router.get('/:id/download', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect('/api/user/login');
+    }
+
     const { id } = req.params;
 
     const response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
@@ -51,6 +63,10 @@ router.get('/:id/download', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect('/api/user/login');
+    }
+
     const { id } = req.params;
 
     const book_response = await fetch(`http://localhost:${library_port}/api/books/${id}`, {
@@ -79,6 +95,10 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect('/api/user/login');
+    }
+
     const book_response = await fetch(`http://localhost:${library_port}/api/books`, {
         method: 'GET'
     });

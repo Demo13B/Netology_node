@@ -38,11 +38,19 @@ router.get('/logout', async (req, res) => {
 });
 
 router.get('/login', async (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.redirect('/')
+    }
+
     res.render('users/login');
 });
 
 router.get('/signup', async (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.redirect('/')
+    }
+
     res.render('users/signup');
-})
+});
 
 module.exports = router;
