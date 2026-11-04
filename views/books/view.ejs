@@ -63,5 +63,60 @@
                     <% }) %>
         </div>
 
+        <div class="row">
+            <div class="col-4">
+                <div id="list" class="list-group">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4">
+                <div class="form-group">
+                    <label for="text">Оставить комментарий</label>
+                    <textarea placeholder="" class="form-control" id="text"></textarea>
+                </div>
+                <button type="submit" id="send" class="btn btn-primary">Опубликовать</button>
+            </div>
+        </div>
+
+        <script>
+            const bookId = '<%- JSON.stringify(String(book._id)) %>';
+            const socket = io.connect('/');
+            const boxList = document.querySelector('#list');
+            const text = document.querySelector('#text');
+            const send = document.querySelector('#send');
+
+            const getTmp = (comment) => {
+                div = `<div class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <small>
+                            ${comment.createdAt}
+                        </small>
+                    </div>
+                    <p class="mb-1">
+                        ${comment.message}
+                    </p>
+                </div>`;
+                return div;
+            }
+
+            send.addEventListener('click', () => {
+                console.log('Yes');
+                socket.emit('message', {
+                    book: bookId,
+                    message: text.value,
+                    createdAt: Date.now()
+                });
+            });
+
+            socket.on('message', (msg) => {
+                const div = getTmp(msg);
+                boxList.insertAdjacentHTML('beforeend', div);
+            });
+
+        </script>
+
 
         <%- include('../port/layout-end') %>
