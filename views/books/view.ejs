@@ -82,7 +82,7 @@
         </div>
 
         <script>
-            const bookId = '<%- JSON.stringify(String(book._id)) %>';
+            const bookId = '<%- String(book._id) %>';
             const socket = io.connect('/');
             const boxList = document.querySelector('#list');
             const text = document.querySelector('#text');
