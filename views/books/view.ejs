@@ -56,4 +56,12 @@
             </div>
         </div>
 
+        <h2>Комментарии</h2>
+        <div id="comments">
+            <% comments.forEach(comment=> { %>
+                <%- include('comment', { createdAt: comment.createdAt, message: comment.message }) %>
+                    <% }) %>
+        </div>
+
+
         <%- include('../port/layout-end') %>

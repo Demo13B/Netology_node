@@ -75,7 +75,8 @@ router.get('/:id', async (req, res) => {
 
     const body = await response.json();
 
-    res.render('books/view', { title: 'Просмотр книги', book: book, count: body.count });
+    const comments = await (await fetch(`http://localhost:${library_port}/api/books/${id}/comments`)).json();
+    res.render('books/view', { title: 'Просмотр книги', book: book, count: body.count, comments: comments });
 });
 
 router.get('/', async (req, res) => {

@@ -35,7 +35,6 @@ router.get('/:id/download', mongoIdCheck, async (req, res) => {
 router.get('/:id/comments', mongoIdCheck, async (req, res) => {
     const { id } = req.params;
     const comments = await Comment.find({ book: id });
-    console.log(comments);
     res.json(comments);
 });
 
