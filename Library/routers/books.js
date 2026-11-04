@@ -50,6 +50,36 @@ router.get('/:id', mongoIdCheck, async (req, res) => {
     }
 });
 
+router.post('/:id/comment', mongoIdCheck, async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        res.sendStatus(404);
+        return;
+    }
+
+    const book = Book.findById(id);
+    if (!book) {
+        res.sendStatus(404);
+        return;
+    }
+
+    const { message, createdAt } = req.body;
+
+    const newComment = new Comment({
+        book: id,
+        message,
+        createdAt
+    });
+
+    try {
+        newComment.save();
+        res.sendStatus(201);
+    } catch (e) {
+        res.status(400).send(e);
+    }
+});
+
 
 router.post('/', fileFetcher.single('book-file'), async (req, res) => {
     if (req.file == undefined) {

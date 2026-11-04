@@ -107,7 +107,7 @@
                 socket.emit('message', {
                     book: bookId,
                     message: text.value,
-                    createdAt: Date.now()
+                    createdAt: (new Date()).toString()
                 });
             });
 
