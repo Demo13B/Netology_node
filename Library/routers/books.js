@@ -5,6 +5,7 @@ const fs = require('fs');
 const fileFetcher = require('../middleware/file');
 const { mongoIdCheck } = require('../middleware/validator');
 const Book = require('../models/books');
+const Comment = require('../models/comments');
 
 const router = express.Router();
 
@@ -31,6 +32,12 @@ router.get('/:id/download', mongoIdCheck, async (req, res) => {
     }
 });
 
+router.get('/:id/comments', mongoIdCheck, async (req, res) => {
+    const { id } = req.params;
+    const comments = await Comment.find({ book: id });
+    res.json(comments);
+});
+
 router.get('/:id', mongoIdCheck, async (req, res) => {
     const { id } = req.params;
 
@@ -42,7 +49,6 @@ router.get('/:id', mongoIdCheck, async (req, res) => {
         res.status(404).send('The book is not found');
     }
 });
-
 
 router.post('/', fileFetcher.single('book-file'), async (req, res) => {
     if (req.file == undefined) {

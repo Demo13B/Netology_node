@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const http = require('http');
 
 const booksRouter = require('./routers/books');
 const userRouter = require('./routers/users');
@@ -7,6 +8,7 @@ const indexRouter = require('./routers/index');
 const booksEJSRouter = require('./routers/books-ejs');
 const err404 = require('./middleware/404');
 const logger = require('./middleware/logger');
+const createSocket = require('./sockets/comments');
 
 const app = express();
 app.use(express.json());
@@ -31,7 +33,9 @@ const start = async (port, urlDB) => {
     try {
         await mongoose.connect(urlDB);
         console.log('Connected to mongo');
-        app.listen(port);
+        const server = http.createServer(app);
+        server.listen(port);
+        createSocket(server);
         console.log(`App listening on port: ${port}`);
     } catch (e) {
         console.error(e);
