@@ -8,6 +8,8 @@ async function createSocket(server) {
     const io = socketIO(server);
 
     io.on('connection', (socket) => {
+        const { roomName } = socket.handshake.query;
+        socket.join(roomName);
         socket.on('message', async (msg) => {
             console.log(msg);
             const book = await Book.findById(msg.book);
@@ -20,7 +22,7 @@ async function createSocket(server) {
 
             try {
                 await newComment.save();
-                socket.broadcast.emit('message', msg);
+                socket.to(roomName).emit('message', msg);
                 socket.emit('message', msg);
             } catch (e) {
                 console.log(e);
